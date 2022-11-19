@@ -1,14 +1,9 @@
 import { Component } from '@angular/core';
-import { ethers } from 'ethers';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { BrowserModule } from '@angular/platform-browser';
-import { AppRoutingModule } from './app-routing.module';
+import { BigNumber, ethers } from 'ethers';
+import { environment } from '../environments/environment'
+import  MyToken from '../assets/MyToken.json' 
+import  Ballot  from '../assets/Ballot.json'
 
-imports: [
-  BrowserModule,
-  NgbModule,
-  AppRoutingModule,
-]
 
 @Component({
   selector: 'app-root',
@@ -17,12 +12,60 @@ imports: [
 })
 export class AppComponent {
   wallet: ethers.Wallet | undefined;
-
+   provider: ethers.providers.AlchemyProvider | undefined
+ // provider: ethers.providers.BaseProvider | undefined;
+  etherBalance: number | undefined;
+  tokenContract: ethers.Contract | undefined;
+  tokenContractAddress: string | undefined;
+  tokenBalance: number | undefined;
+  voteBalance: number | undefined;
+  ballotContract: ethers.Contract | undefined;
+  
+  // attempt to add mm wallet
+  MMaddress: string | undefined;
   constructor(){
   }
 
-  createWallet(){
-    this.wallet = ethers.Wallet.createRandom();
+  createWallet() {
+    // add your provider api key here
+    this.provider = new ethers.providers.AlchemyProvider("goerli", environment.alchemyAPI)
+   //this.provider = ethers.providers.getDefaultProvider("goerli");
+    this.wallet = ethers.Wallet.createRandom().connect(this.provider); 
+    this.tokenContract = new ethers.Contract(environment.tokenContract, MyToken.abi, this.wallet)
+    // get eth balance in wallet
+    if (this.tokenContractAddress) {
+    this.wallet.getBalance().then((balanceBn) => {
+      this.etherBalance = parseFloat(ethers.utils.formatEther(balanceBn))
+    })
+    // get token balance
+    this.tokenContract['balanceOf'](this.wallet.address).then((tokenBalanceBn: BigNumber) => {
+      this.tokenBalance = parseFloat(ethers.utils.formatEther(tokenBalanceBn))
+    })
+    this.tokenContract['getVotes'](this.wallet.address).then((voteBalanceBn: BigNumber) => {
+      this.voteBalance = parseFloat(ethers.utils.formatEther(voteBalanceBn))
+    })
+    this.ballotContract = new ethers.Contract(environment.ballotContract, Ballot.abi, this.wallet)
+}
+  }
+  vote(voteId: string){
+    this.ballotContract["vote"](voteId)
+  }
 
+  request() {
+    
+  }
+  
+  async connectWallet() {
+    // A Web3Provider wraps a standard Web3 provider, which is
+// what MetaMask injects as window.ethereum into each page
+const MetaMaskprovider = new ethers.providers.Web3Provider(window.ethereum)
+// MetaMask requires requesting permission to connect users accounts
+await MetaMaskprovider.send("eth_requestAccounts", []);
+// The MetaMask plugin also allows signing transactions to
+// send ether and pay to change state within the blockchain.
+// For this, you need the account signer...
+  const signer = MetaMaskprovider.getSigner();
+  this.MMaddress = await signer._address
+  console.log(this.MMaddress);
   }
 }
