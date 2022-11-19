@@ -3,6 +3,7 @@ import { BigNumber, ethers } from 'ethers';
 import { environment } from '../environments/environment'
 import  MyToken from '../assets/MyToken.json' 
 import  Ballot  from '../assets/Ballot.json'
+import { HttpClient } from '@angular/common/http';
 
 
 @Component({
@@ -23,7 +24,10 @@ export class AppComponent {
   
   // attempt to add mm wallet
   MMaddress: string | undefined;
-  constructor(){
+  constructor(private http: HttpClient){
+    this.http.get<string>('http://localhost:3000/token-address').subscribe((ans) => {
+      this.tokenContractAddress = ans
+    });
   }
 
   createWallet() {
@@ -41,16 +45,20 @@ export class AppComponent {
     this.tokenContract['balanceOf'](this.wallet.address).then((tokenBalanceBn: BigNumber) => {
       this.tokenBalance = parseFloat(ethers.utils.formatEther(tokenBalanceBn))
     })
+    // get voting power balance
     this.tokenContract['getVotes'](this.wallet.address).then((voteBalanceBn: BigNumber) => {
       this.voteBalance = parseFloat(ethers.utils.formatEther(voteBalanceBn))
     })
+    // define ballot contract
     this.ballotContract = new ethers.Contract(environment.ballotContract, Ballot.abi, this.wallet)
 }
   }
+  // this needs to hook up to the ballot contract somehow
   vote(voteId: string){
-    this.ballotContract["vote"](voteId)
+    console.log(`vote for ${voteId}`)
+  //  await this.ballotContract["vote"](voteId)
   }
-
+  // this needs to mint tokens from our token contract somehow
   request() {
     
   }
