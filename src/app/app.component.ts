@@ -25,8 +25,9 @@ export class AppComponent {
   // attempt to add mm wallet
   MMaddress: string | undefined;
   constructor(private http: HttpClient){
-    this.http.get<string>('http://localhost:3000/token-address').subscribe((ans) => {
-      this.tokenContractAddress = ans
+    this.http.get<any>("http://localhost:3000/token-address").subscribe((ans) => {
+      console.log(ans)
+      this.tokenContractAddress = ans.result;
     });
   }
 
@@ -60,7 +61,9 @@ export class AppComponent {
   }
   // this needs to mint tokens from our token contract somehow
   request() {
-    
+    this.http.post<any>("http://localhost:3000/request-tokens", {address: this.wallet?.address}).subscribe((ans) => {
+      console.log(ans)
+      this.tokenContractAddress = ans.result;})
   }
   
   async connectWallet() {

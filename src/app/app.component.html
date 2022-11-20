@@ -28,7 +28,7 @@
             </div>
             <div class="card p-4 m-2">
                 <p>Token Contract:</p>
-                <p>{{tokenContract?.address}}</p>
+                <p>{{tokenContractAddress}}</p>
             </div>
             <div class="card p-4 m-2">
                 <p>My Token Balance:</p>
@@ -66,8 +66,8 @@
         </div>
         <div>
             <h3>Request Tokens!</h3>
-            <input #voteId type="number" min="0" [max]="voteBalance">
-            <button (click)="request()" type="button" class="btn btn-success px-4 mx-2">Vote!</button>
+           
+            <button (click)="request()" type="button" class="btn btn-success px-4 mx-2">Gimme Tokens yarrr!</button>
             </div>
     </div>
         </div>
