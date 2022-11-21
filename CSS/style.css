@@ -1,0 +1,23 @@
+html{
+ scroll-behavior: smooth;
+ padding: 0;
+  margin: 0;
+  letter-spacing: 0.025em;
+  line-height: 1.5;
+  text-align: center;
+}
+button{
+  border: 2rm;
+  padding: 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 6rm;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+div{
+  margin: 0;
+  padding: 10px;
+}
