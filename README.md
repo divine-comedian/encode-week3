@@ -1,3 +1,7 @@
+- Create a voting dApp to cast votes, delegate and query results on chain
+- Request voting tokens to be minted using the API
+- (bonus) Store a list of recent votes in the backend and display that on frontend
+
 # MyApp
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.2.9.
