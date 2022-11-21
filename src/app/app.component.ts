@@ -4,6 +4,8 @@ import { environment } from '../environments/environment'
 import  MyToken from '../assets/MyToken.json' 
 import  Ballot  from '../assets/Ballot.json'
 import { HttpClient } from '@angular/common/http';
+import { WalletService } from './services/wallet.service';
+
 
 
 @Component({
@@ -21,9 +23,15 @@ export class AppComponent {
   tokenBalance: number | undefined;
   voteBalance: number | undefined;
   ballotContract: ethers.Contract | undefined;
+
+  // Connect to wallet
+  connectToWallet  = () => {
+    this.walletService.connectWallet();
+  }
   
   // attempt to add mm wallet
-  MMaddress: string | undefined;
+  address: string | undefined;
+  walletService: any;
   constructor(private http: HttpClient){
     this.http.get<any>("http://localhost:3000/token-address").subscribe((ans) => {
       console.log(ans)
@@ -78,23 +86,8 @@ await MetaMaskprovider.send("eth_requestAccounts", []);
 // send ether and pay to change state within the blockchain.
 // For this, you need the account signer...
   const signer = MetaMaskprovider.getSigner();
-  signer.getAddress().then((address) => {;
-  console.log(this.MMaddress);
-  this.tokenContract = new ethers.Contract(environment.tokenContract, MyToken.abi, this.wallet)
-    // get eth balance in wallet
-    if (this.tokenContractAddress) {
-      
-    signer.getBalance().then((balanceBn) => {
-      this.etherBalance = parseFloat(ethers.utils.formatEther(balanceBn))
-    })
-    // get token balance
-   this.tokenContract['balanceOf'](this.MMaddress).then((tokenBalanceBn: BigNumber) => {
-      this.tokenBalance = parseFloat(ethers.utils.formatEther(tokenBalanceBn))
-    })
-    // get voting power balance
-    this.tokenContract['getVotes'](this.MMaddress).then((voteBalanceBn: BigNumber) => {
-      this.voteBalance = parseFloat(ethers.utils.formatEther(voteBalanceBn))
-    })}
-    })
+  this.address = await signer._address
+  console.log(this.address);
+
   }
 }
