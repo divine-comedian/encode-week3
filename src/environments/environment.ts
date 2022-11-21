@@ -3,7 +3,10 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  alchemyAPI: "SRWLpUQxML7F45zAvOmFmma1XFPsufnm",
+  tokenContract: "0xB46C4e94fbB1e447a0E64F37CDE249F65E5147D3",
+  ballotContract: "0x8f1c4b0bb325ba77029aa172cb7c48746ee8faed",
 };
 
 /*
