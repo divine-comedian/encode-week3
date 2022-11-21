@@ -29,7 +29,6 @@ export class AppComponent {
       console.log(ans)
       this.tokenContractAddress = ans.result;
     });
-
   }
 
   updateInfo() {
