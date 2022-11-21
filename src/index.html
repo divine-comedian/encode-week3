@@ -2,21 +2,31 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>MyApp</title>
 </head>
 <body>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/Users/sophiag20/project/encode-week3-FrontEnd/CSS/style.css">
        <div>
+        <h1>MyApp</h1>
+        <button
+          (click)="connectWallet(walletAddr.value)"
+          type="button"
+          class="btn btn-success btn-sm px-4 mx-2"
+        >Connect
+      </button>
+      <div *ngIf="walletAddress">
+        <p>This is your address: {{walletAddress}}</p>
+        <p>your token contract address is: {{tokenContractAddress}}</p>
             <p> Amout of Tokens:</p>
-          <input type="text" id="amount" name="amount" value="0">
-            <p>Request Tokens:</p>
-          <button (click)="requestTokens()">Request Tokens</button>
-       </div>
-   <button id="mint">Mint</button>
+            <input type="text" #amountOfTokens>
+          <input type="string" min="0"[max]="" placeholder="0">
 
+        <div>
+          <p>Ether Balance: {{etherBalance}}</p>
+        </div>
+   <button id="mint">Mint</button>
   <app-root></app-root>
 </body>
 </html>
