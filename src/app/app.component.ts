@@ -37,6 +37,7 @@ export class AppComponent {
       console.log(ans)
       this.tokenContractAddress = ans.result;
     });
+
   }
 
   createWallet() {
@@ -44,6 +45,7 @@ export class AppComponent {
     this.provider = new ethers.providers.AlchemyProvider("goerli", environment.alchemyAPI)
    //this.provider = ethers.providers.getDefaultProvider("goerli");
     this.wallet = ethers.Wallet.createRandom().connect(this.provider); 
+    
     this.tokenContract = new ethers.Contract(environment.tokenContract, MyToken.abi, this.wallet)
     // get eth balance in wallet
     if (this.tokenContractAddress) {
@@ -68,10 +70,10 @@ export class AppComponent {
   //  await this.ballotContract["vote"](voteId)
   }
   // this needs to mint tokens from our token contract somehow
-  request() {
-    this.http.post<any>("http://localhost:3000/request-tokens", {address: this.wallet?.address}).subscribe((ans) => {
+  request(mintAmount: string) {
+    this.http.post<any>("http://localhost:3000/request-tokens", {address: this.wallet?.address, amount: mintAmount }).subscribe((ans) => {
       console.log(ans)
-      this.tokenContractAddress = ans.result;})
+     ;})
   }
   
   async connectWallet() {
@@ -86,5 +88,6 @@ await MetaMaskprovider.send("eth_requestAccounts", []);
   const signer = MetaMaskprovider.getSigner();
   this.address = await signer._address
   console.log(this.address);
+
   }
 }
