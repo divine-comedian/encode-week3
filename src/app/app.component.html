@@ -16,11 +16,12 @@
     
     <button type="button" class="btn btn-info btn-lg px-4 gap-3">
         Import a Wallet</button>
+
     </div>
         </div > 
-        <div *ngIf="wallet || MMaddress">
-            <p *ngIf="wallet" class="lead mb-4">This is your address: {{wallet.address}}</p>
-            <p *ngIf="MMaddress" class="lead mb-4">This is your address: {{MMaddress}}</p>
+        <div *ngIf="wallet || address">
+            <p *ngIf="wallet" class="lead mb-4">This is your address: {{wallet}}</p>
+            <p *ngIf="address" class="lead mb-4">This is your address: {{wallet}}</p>
             <div class="d-grid gap-2 d-sm-flex justify-content-sm-center"> 
                 <div class="card p-2 m-2">
                 <p>Ether Balance: </p>
