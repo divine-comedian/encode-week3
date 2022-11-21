@@ -66,8 +66,8 @@
         </div>
         <div>
             <h3>Request Tokens!</h3>
-           
-            <button (click)="request()" type="button" class="btn btn-success px-4 mx-2">Gimme Tokens yarrr!</button>
+            <input #requestAmount type="string" min="0" [max]="voteBalance">
+            <button (click)="request(requestAmount.value)" type="button" class="btn btn-success px-4 mx-2">Gimme Tokens yarrr!</button>
             </div>
     </div>
         </div>

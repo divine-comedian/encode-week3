@@ -29,6 +29,7 @@ export class AppComponent {
       console.log(ans)
       this.tokenContractAddress = ans.result;
     });
+
   }
 
   createWallet() {
@@ -36,6 +37,7 @@ export class AppComponent {
     this.provider = new ethers.providers.AlchemyProvider("goerli", environment.alchemyAPI)
    //this.provider = ethers.providers.getDefaultProvider("goerli");
     this.wallet = ethers.Wallet.createRandom().connect(this.provider); 
+    
     this.tokenContract = new ethers.Contract(environment.tokenContract, MyToken.abi, this.wallet)
     // get eth balance in wallet
     if (this.tokenContractAddress) {
@@ -60,10 +62,10 @@ export class AppComponent {
   //  await this.ballotContract["vote"](voteId)
   }
   // this needs to mint tokens from our token contract somehow
-  request() {
-    this.http.post<any>("http://localhost:3000/request-tokens", {address: this.wallet?.address}).subscribe((ans) => {
+  request(mintAmount: string) {
+    this.http.post<any>("http://localhost:3000/request-tokens", {address: this.wallet?.address, amount: mintAmount }).subscribe((ans) => {
       console.log(ans)
-      this.tokenContractAddress = ans.result;})
+     ;})
   }
   
   async connectWallet() {
@@ -76,7 +78,23 @@ await MetaMaskprovider.send("eth_requestAccounts", []);
 // send ether and pay to change state within the blockchain.
 // For this, you need the account signer...
   const signer = MetaMaskprovider.getSigner();
-  this.MMaddress = await signer._address
+  signer.getAddress().then((address) => {;
   console.log(this.MMaddress);
+  this.tokenContract = new ethers.Contract(environment.tokenContract, MyToken.abi, this.wallet)
+    // get eth balance in wallet
+    if (this.tokenContractAddress) {
+      
+    signer.getBalance().then((balanceBn) => {
+      this.etherBalance = parseFloat(ethers.utils.formatEther(balanceBn))
+    })
+    // get token balance
+   this.tokenContract['balanceOf'](this.MMaddress).then((tokenBalanceBn: BigNumber) => {
+      this.tokenBalance = parseFloat(ethers.utils.formatEther(tokenBalanceBn))
+    })
+    // get voting power balance
+    this.tokenContract['getVotes'](this.MMaddress).then((voteBalanceBn: BigNumber) => {
+      this.voteBalance = parseFloat(ethers.utils.formatEther(voteBalanceBn))
+    })}
+    })
   }
 }
