@@ -4,8 +4,6 @@ import { environment } from '../environments/environment'
 import  MyToken from '../assets/MyToken.json' 
 import  Ballot  from '../assets/Ballot.json'
 import { HttpClient } from '@angular/common/http';
-import { WalletService } from './services/wallet.service';
-
 
 
 @Component({
@@ -23,15 +21,9 @@ export class AppComponent {
   tokenBalance: number | undefined;
   voteBalance: number | undefined;
   ballotContract: ethers.Contract | undefined;
-
-  // Connect to wallet
-  connectToWallet  = () => {
-    this.walletService.connectWallet();
-  }
   
   // attempt to add mm wallet
-  address: string | undefined;
-  walletService: any;
+  MMaddress: string | undefined;
   constructor(private http: HttpClient){
     this.http.get<any>("http://localhost:3000/token-address").subscribe((ans) => {
       console.log(ans)
@@ -40,30 +32,36 @@ export class AppComponent {
 
   }
 
+  updateInfo() {
+    this.tokenContract = new ethers.Contract(environment.tokenContract, MyToken.abi, this.wallet)
+    // get eth balance in wallet
+    if (this.tokenContractAddress) {
+    this.wallet?.getBalance().then((balanceBn) => {
+      this.etherBalance = parseFloat(ethers.utils.formatEther(balanceBn))
+    })
+    // get token balance
+    this.tokenContract['balanceOf'](this.wallet?.address).then((tokenBalanceBn: BigNumber) => {
+      this.tokenBalance = parseFloat(ethers.utils.formatEther(tokenBalanceBn))
+    })
+    // get voting power balance
+    this.tokenContract['getVotes'](this.wallet?.address).then((voteBalanceBn: BigNumber) => {
+      this.voteBalance = parseFloat(ethers.utils.formatEther(voteBalanceBn))
+    })
+    // define ballot contract
+    this.ballotContract = new ethers.Contract(environment.ballotContract, Ballot.abi, this.wallet)
+
+  }
+}
+
   createWallet() {
     // add your provider api key here
     this.provider = new ethers.providers.AlchemyProvider("goerli", environment.alchemyAPI)
    //this.provider = ethers.providers.getDefaultProvider("goerli");
     this.wallet = ethers.Wallet.createRandom().connect(this.provider); 
+    this.updateInfo();
+    setInterval(this.updateInfo, 1000);
     
-    this.tokenContract = new ethers.Contract(environment.tokenContract, MyToken.abi, this.wallet)
-    // get eth balance in wallet
-    if (this.tokenContractAddress) {
-    this.wallet.getBalance().then((balanceBn) => {
-      this.etherBalance = parseFloat(ethers.utils.formatEther(balanceBn))
-    })
-    // get token balance
-    this.tokenContract['balanceOf'](this.wallet.address).then((tokenBalanceBn: BigNumber) => {
-      this.tokenBalance = parseFloat(ethers.utils.formatEther(tokenBalanceBn))
-    })
-    // get voting power balance
-    this.tokenContract['getVotes'](this.wallet.address).then((voteBalanceBn: BigNumber) => {
-      this.voteBalance = parseFloat(ethers.utils.formatEther(voteBalanceBn))
-    })
-    // define ballot contract
-    this.ballotContract = new ethers.Contract(environment.ballotContract, Ballot.abi, this.wallet)
 }
-  }
   // this needs to hook up to the ballot contract somehow
   vote(voteId: string){
     console.log(`vote for ${voteId}`)
@@ -85,9 +83,24 @@ await MetaMaskprovider.send("eth_requestAccounts", []);
 // The MetaMask plugin also allows signing transactions to
 // send ether and pay to change state within the blockchain.
 // For this, you need the account signer...
-  const signer = MetaMaskprovider.getSigner();
-  this.address = await signer._address
-  console.log(this.address);
-
+  const signer = await MetaMaskprovider.getSigner();
+  await signer.getAddress().then((address) => {;
+  console.log(address);
+  this.tokenContract = new ethers.Contract(environment.tokenContract, MyToken.abi, this.wallet)
+    // get eth balance in wallet
+    if (this.tokenContractAddress) {
+      
+    signer.getBalance().then((balanceBn) => {
+      this.etherBalance = parseFloat(ethers.utils.formatEther(balanceBn))
+    })
+    // get token balance
+   this.tokenContract['balanceOf'](address).then((tokenBalanceBn: BigNumber) => {
+      this.tokenBalance = parseFloat(ethers.utils.formatEther(tokenBalanceBn))
+    })
+    // get voting power balance
+    this.tokenContract['getVotes'](address).then((voteBalanceBn: BigNumber) => {
+      this.voteBalance = parseFloat(ethers.utils.formatEther(voteBalanceBn))
+    })}
+    })
   }
 }
